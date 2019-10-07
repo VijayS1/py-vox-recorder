@@ -1,14 +1,31 @@
 #!/usr/bin/python
 ## Default path for storing recordings
 RECORD_PATH = "c:/temp/" 
-# for windows it just saves to same folder as the program location
+# for windows it just saves to same folder as the program location "./"
 
 # Amount of time to continue recording after input drops below threshold (smoothing)
 HANGDELAY = 3
 # Recording trigger default threshold on startup
 THRESHOLD = 3
 # Device index of your input
+DEVICE_INDEX=0
 
+# TODO:
+# Figure out threshhold level
+# use a better UI with less dependency on , already included in winpython (QT? TK? or pysimplegui)
+# keep a log of all recordings and report it
+# convert recordings to AMR
+# convert audio to Text with Index information
+# find tool to see audio with text like happyscribe 
+# better silent interface
+# maybe sepearte options file? 
+# visualizer for recording? use mimic from mycroft-ai? maybe send files to mycroft AI
+# for conversion to text? 
+# better detections of silence
+# speaker identification
+# almost like a CIA spy/vocoder tool
+# should be able to add VOX functionality to existing tools to make it easier (like mimic)
+# or captura? 
 
 import wx
 # import random
@@ -24,6 +41,8 @@ import sys
 import getopt
 
 
+from pydub import AudioSegment #library for converting audio format
+
 
 RUNNING = 1
 CHUNK = 2048
@@ -37,6 +56,11 @@ RMSDATA['DATA'] = []
 RMSDATA['RECORD_CLOCK'] = '' #default
 RMSDATA['RECORDFLAG'] = False
 RMSDATA['_RECORDFLAG'] = False
+
+#testing
+def convertAudio(wavdata,filename):
+    sound = AudioSegment.from_wav(wavdata)
+    sound.export(filename,format='amr')
 
 class _streamProcessor(threading.Thread):
     def __init__(self, queue):
@@ -179,7 +203,7 @@ class MyFrame(wx.Frame):
 argv  = sys.argv[1:]
 opts, args = getopt.getopt(argv,"hld:",["device="])
 #DEVICE_INDEX=""
-DEVICE_INDEX=0
+
 try: 
     opts, args = getopt.getopt(argv,"hld:",["device="])
 except getopt.GetoptError:
